@@ -71,11 +71,11 @@ public final class GaleonModel extends EntityModel<GaleonRenderState> {
 
     private static void mast(Pieces p,float z,float bottom,float top,float diameter) {
         float h=bottom-top;
-        p.add(MAHOGANY,-diameter/2,top+220,z-diameter/2,diameter,Math.min(h,220),diameter);
-        p.add(OAK,-diameter*0.43F,top+80,z-diameter*0.43F,diameter*.86F,
-                Math.min(h-220,140),diameter*.86F);
+        p.add(MAHOGANY,-diameter/2,bottom-260,z-diameter/2,diameter,260,diameter);
+        p.add(OAK,-diameter*0.43F,top+130,z-diameter*0.43F,diameter*.86F,
+                h-390,diameter*.86F);
         p.add(OAK,-diameter*.32F,top,z-diameter*.32F,diameter*.64F,
-                Math.min(80,h-360),diameter*.64F);
+                130,diameter*.64F);
         p.add(GOLD,-diameter*.5F,top-6,z-diameter*.5F,diameter,6,diameter);
         // Fighting top/platforms, common on early 17th-century square-rigged ships.
         p.add(DECK,-21,top+218,z-21,42,4,42);

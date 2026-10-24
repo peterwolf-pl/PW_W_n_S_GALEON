@@ -10,7 +10,7 @@ function generate(){
    let a=[x,y,z],b=[x+w,y,z],c=[x+w,y+h,z],d=[x,y+h,z],e=[x,y,z+l],f=[x+w,y,z+l],g=[x+w,y+h,z+l],h2=[x,y+h,z+l];
    quad(a,b,c,d,m);quad(f,e,h2,g,m);quad(e,a,d,h2,m);quad(b,f,g,c,m);quad(d,c,g,h2,m);quad(e,f,b,a,m);
  }
- const sub=(a,b)=>a.map((x,i)=>x-b[i]),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2]];
+ const sub=(a,b)=>a.map((x,i)=>x-b[i]),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
  const unit=x=>{let len=Math.hypot(...x)||1;return x.map(t=>t/len);},plus=(a,b)=>a.map((x,i)=>x+b[i]),scale=(a,t)=>a.map(x=>x*t);
  function pole(a,b,r,m,n=8,endR=r){
    const d=unit(sub(b,a)),g=Math.abs(d[1])<.85?[0,1,0]:[1,0,0],u=unit(cross(d,g)),w=cross(d,u);

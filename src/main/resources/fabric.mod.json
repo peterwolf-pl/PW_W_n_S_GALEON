@@ -1,0 +1,13 @@
+{
+ "schemaVersion":1,
+ "id":"pw_wind_n_sails_galeon",
+ "version":"${version}",
+ "name":"Peterwolf's Wind & Sails: Galeon",
+ "description":"Full-scale 36-m Spanish galleon visual prototype (hull, stern galleries, gun decks, rigging and sails).",
+ "authors":["Peterwolf"],
+ "license":"All-Rights-Reserved",
+ "environment":"*",
+ "icon":"assets/pw_wind_n_sails_galeon/icon.png",
+ "entrypoints":{"main":["com.piotrek.galeon.GaleonMod"],"client":["com.piotrek.galeon.client.GaleonClient"]},
+ "depends":{"fabricloader":">=0.19.5","minecraft":"~26.3","java":">=25","fabric-api":"*","pw_wind_n_sails":"*"}
+}

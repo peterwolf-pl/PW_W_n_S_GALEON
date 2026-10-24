@@ -1,0 +1,86 @@
+plugins {
+ id 'net.fabricmc.fabric-loom' version "${loom_version}"
+ id 'maven-publish'
+}
+version = project.mod_version
+group = project.maven_group
+base { archivesName = project.archives_base_name }
+repositories { mavenCentral() }
+loom {
+ splitEnvironmentSourceSets()
+ mods { "pw_wind_n_sails_galeon" { sourceSet sourceSets.main; sourceSet sourceSets.client } }
+}
+dependencies {
+ minecraft "com.mojang:minecraft:${project.minecraft_version}"
+ implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+ implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+ def windSails = file('../pw_wind_n_sails/build/libs')
+ if (windSails.exists()) {
+   def jars = fileTree(dir: windSails, include:['pw_wind_n_sails*.jar'],exclude:['*-sources.jar'])
+   compileOnly jars
+   clientCompileOnly jars
+   localRuntime jars
+ }
+}
+def artwork = layout.buildDirectory.dir('generated/galeon-artwork')
+sourceSets.main.resources.srcDir(artwork)
+tasks.register('generateGaleonArtwork') {
+ outputs.dir(artwork)
+ doLast {
+   def target = artwork.get().asFile
+   def entityDir = new File(target,'assets/pw_wind_n_sails_galeon/textures/entity')
+   def itemDir = new File(target,'assets/pw_wind_n_sails_galeon/textures/item')
+   entityDir.mkdirs(); itemDir.mkdirs()
+   def colors = [
+     [61,36,26],[113,64,39],[155,108,62],[80,43,30],
+     [211,159,57],[61,66,70],[227,219,182],[143,118,86],
+     [23,23,23],[126,39,35],[72,101,111],[181,122,73],
+     [192,179,143],[114,90,55],[136,29,24],[51,54,55]
+   ]
+   def atlas = new java.awt.image.BufferedImage(2048,2048,java.awt.image.BufferedImage.TYPE_INT_ARGB)
+   def rng = new java.util.Random(1607)
+   for (int m=0;m<16;m++) {
+     int ox=(m%4)*512, oy=(int)(m/4)*512
+     def base=colors[m]
+     for (int y=0;y<512;y++) {
+       int plank=((int)(y/19)%2==0)?6:-4
+       for (int x=0;x<512;x++) {
+         int noise=rng.nextInt(15)-7
+         if(m!=6 && m!=10) noise += plank + ((y%19==0)?-23:0)
+         int r=Math.max(0,Math.min(255,base[0]+noise))
+         int g=Math.max(0,Math.min(255,base[1]+noise))
+         int b=Math.max(0,Math.min(255,base[2]+noise))
+         atlas.setRGB(ox+x,oy+y,new java.awt.Color(r,g,b).getRGB())
+       }
+     }
+   }
+   javax.imageio.ImageIO.write(atlas,'png',new File(entityDir,'galeon.png'))
+   def icon=new java.awt.image.BufferedImage(64,64,java.awt.image.BufferedImage.TYPE_INT_ARGB)
+   def g=icon.createGraphics()
+   g.color=new java.awt.Color(50,89,118);g.fillRect(0,0,64,64)
+   g.color=new java.awt.Color(67,39,25);g.fillPolygon([6,58,48,15] as int[],[40,40,51,51] as int[],4)
+   g.color=new java.awt.Color(185,125,68);g.fillPolygon([7,58,47,17] as int[],[37,37,44,44] as int[],4)
+   g.color=new java.awt.Color(235,222,186)
+   g.fillPolygon([19,33,33,19] as int[],[8,8,33,33] as int[],4)
+   g.fillPolygon([36,47,47,36] as int[],[14,16,33,33] as int[],4)
+   g.color=new java.awt.Color(76,49,29)
+   g.fillRect(18,6,2,33);g.fillRect(35,10,2,29)
+   g.fillRect(17,20,20,2);g.fillRect(33,23,17,2)
+   g.dispose()
+   javax.imageio.ImageIO.write(icon,'png',new File(itemDir,'galeon.png'))
+   def iconFile=new File(target,'assets/pw_wind_n_sails_galeon/icon.png');iconFile.parentFile.mkdirs()
+   javax.imageio.ImageIO.write(icon,'png',iconFile)
+ }
+}
+tasks.named('processResources') {
+ dependsOn tasks.named('generateGaleonArtwork')
+ inputs.property 'version', project.version
+ filesMatching('fabric.mod.json') { expand version: project.version }
+}
+tasks.withType(JavaCompile).configureEach { options.release=25 }
+java {
+ withSourcesJar()
+ toolchain { languageVersion=JavaLanguageVersion.of(25) }
+ sourceCompatibility=JavaVersion.VERSION_25
+ targetCompatibility=JavaVersion.VERSION_25
+}

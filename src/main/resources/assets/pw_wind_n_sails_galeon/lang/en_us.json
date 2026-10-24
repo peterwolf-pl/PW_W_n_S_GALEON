@@ -1,0 +1,5 @@
+{
+  "item.pw_wind_n_sails_galeon.galeon": "Spanish Galeon (Prototype)",
+  "itemGroup.pw_wind_n_sails_galeon.group": "Wind & Sails: Galeon",
+  "message.pw_wind_n_sails_galeon.shallow": "Galeon needs at least five blocks of water depth."
+}

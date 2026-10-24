@@ -1,0 +1,29 @@
+name: Verify Galeon prototype
+on:
+  push:
+    branches: [main, feat/full-scale-galleon-model]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  model-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check original full-scale model topology and dimensions
+        run: node tools/check_geometry.mjs
+      - name: Confirm master asset reproducibility
+        run: |
+          node tools/generate_galeon_obj.mjs
+          git diff --exit-code -- model/galeon_master.obj model/galeon_master.mtl
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.2.1'
+      - name: Build Fabric 26.3 submod
+        run: gradle --no-daemon clean build

@@ -5,6 +5,7 @@ import com.piotrek.galeon.entity.GaleonEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -27,8 +28,8 @@ public final class GaleonItem extends Item {
         // This checks the placement point. Full hull footprint clearance is not yet implemented.
         for (int d=0; d<5; d++) {
             if (!level.getFluidState(water.below(d)).is(FluidTags.WATER)) {
-                if (!level.isClientSide())
-                    player.displayClientMessage(
+                if (player instanceof ServerPlayer)
+                    ((ServerPlayer) player).sendSystemMessage(
                             Component.translatable("message.pw_wind_n_sails_galeon.shallow"), true);
                 return InteractionResult.FAIL;
             }
